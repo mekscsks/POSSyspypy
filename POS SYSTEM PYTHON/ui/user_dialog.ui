@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UserDialog</class>
+ <widget class="QDialog" name="UserDialog">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>380</width><height>280</height></rect>
+  </property>
+  <property name="windowTitle"><string>User</string></property>
+  <property name="modal"><bool>true</bool></property>
+  <layout class="QVBoxLayout" name="mainLayout">
+   <property name="leftMargin"><number>20</number></property>
+   <property name="topMargin"><number>20</number></property>
+   <property name="rightMargin"><number>20</number></property>
+   <property name="bottomMargin"><number>20</number></property>
+   <property name="spacing"><number>12</number></property>
+
+   <item>
+    <widget class="QLabel" name="lblTitle">
+     <property name="text"><string>Add User</string></property>
+     <property name="styleSheet"><string>font-size:16px;font-weight:bold;color:#1a73e8;</string></property>
+    </widget>
+   </item>
+
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="horizontalSpacing"><number>12</number></property>
+     <property name="verticalSpacing"><number>10</number></property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblUsername"><property name="text"><string>Username *</string></property></widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="txtUsername">
+       <property name="styleSheet"><string>QLineEdit{padding:7px;border:1px solid #ccc;border-radius:4px;font-size:13px;}QLineEdit:focus{border:1px solid #1a73e8;}</string></property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lblPassword"><property name="text"><string>Password *</string></property></widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="txtPassword">
+       <property name="echoMode"><enum>QLineEdit::Password</enum></property>
+       <property name="placeholderText"><string>Leave blank to keep current</string></property>
+       <property name="styleSheet"><string>QLineEdit{padding:7px;border:1px solid #ccc;border-radius:4px;font-size:13px;}QLineEdit:focus{border:1px solid #1a73e8;}</string></property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="lblRole"><property name="text"><string>Role *</string></property></widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="cmbRole">
+       <property name="styleSheet"><string>QComboBox{padding:7px;border:1px solid #ccc;border-radius:4px;font-size:13px;}</string></property>
+       <item><property name="text"><string>cashier</string></property></item>
+       <item><property name="text"><string>admin</string></property></item>
+       <item><property name="text"><string>it</string></property></item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+
+   <item>
+    <spacer name="vertSpacer">
+     <property name="orientation"><enum>Qt::Vertical</enum></property>
+     <property name="sizeHint" stdset="0"><size><width>20</width><height>10</height></size></property>
+    </spacer>
+   </item>
+
+   <item>
+    <layout class="QHBoxLayout" name="btnLayout">
+     <item>
+      <spacer name="btnSpacer">
+       <property name="orientation"><enum>Qt::Horizontal</enum></property>
+       <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnCancel">
+       <property name="text"><string>Cancel</string></property>
+       <property name="styleSheet"><string>QPushButton{background:#eee;border:none;padding:9px 22px;border-radius:4px;font-size:13px;}QPushButton:hover{background:#ddd;}</string></property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnSave">
+       <property name="text"><string>Save</string></property>
+       <property name="styleSheet"><string>QPushButton{background:#1a73e8;color:white;border:none;padding:9px 22px;border-radius:4px;font-size:13px;font-weight:bold;}QPushButton:hover{background:#1558b0;}</string></property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+
+  </layout>
+ </widget>
+</ui>
