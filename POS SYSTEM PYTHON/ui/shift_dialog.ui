@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShiftDialog</class>
+ <widget class="QDialog" name="ShiftDialog">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>480</width><height>560</height></rect>
+  </property>
+  <property name="windowTitle"><string>Shift Management</string></property>
+  <property name="modal"><bool>true</bool></property>
+  <property name="styleSheet">
+   <string>QDialog{background:#f0f4f8;}
+    QLabel#lblTitle{font-size:16px;font-weight:bold;color:#1a73e8;}
+    QLabel{font-size:13px;color:#333;}
+    QLineEdit,QDoubleSpinBox,QTextEdit{padding:8px;border:1px solid #ccc;border-radius:5px;font-size:13px;background:white;}
+    QLineEdit:focus,QDoubleSpinBox:focus,QTextEdit:focus{border:2px solid #1a73e8;}
+    QPushButton#btnPrimary{background:#1a73e8;color:white;border:none;border-radius:5px;font-size:14px;font-weight:bold;padding:10px;}
+    QPushButton#btnPrimary:hover{background:#1558b0;}
+    QPushButton#btnDanger{background:#e53935;color:white;border:none;border-radius:5px;font-size:14px;font-weight:bold;padding:10px;}
+    QPushButton#btnDanger:hover{background:#b71c1c;}
+    QPushButton#btnSecondary{background:#eee;color:#333;border:none;border-radius:5px;font-size:13px;padding:9px;}
+    QPushButton#btnSecondary:hover{background:#ddd;}
+    QFrame#cardFrame{background:white;border-radius:8px;}
+    QComboBox{padding:8px;border:1px solid #ccc;border-radius:5px;font-size:13px;background:white;}
+   </string>
+  </property>
+
+  <layout class="QVBoxLayout" name="mainLayout">
+   <property name="leftMargin"><number>24</number></property>
+   <property name="topMargin"><number>24</number></property>
+   <property name="rightMargin"><number>24</number></property>
+   <property name="bottomMargin"><number>24</number></property>
+   <property name="spacing"><number>14</number></property>
+
+   <!-- TITLE -->
+   <item>
+    <widget class="QLabel" name="lblTitle">
+     <property name="text"><string>Shift Management</string></property>
+     <property name="alignment"><set>Qt::AlignCenter</set></property>
+    </widget>
+   </item>
+
+   <!-- STATUS BANNER -->
+   <item>
+    <widget class="QLabel" name="lblStatus">
+     <property name="text"><string>No active shift</string></property>
+     <property name="alignment"><set>Qt::AlignCenter</set></property>
+     <property name="styleSheet"><string>background:#fff3e0;color:#e65100;border-radius:5px;padding:8px;font-weight:bold;font-size:12px;</string></property>
+    </widget>
+   </item>
+
+   <!-- STACKED WIDGET — pages: 0=Start, 1=Active, 2=End Summary -->
+   <item>
+    <widget class="QStackedWidget" name="stackedWidget">
+
+     <!-- PAGE 0: START SHIFT -->
+     <widget class="QWidget" name="pageStart">
+      <layout class="QVBoxLayout" name="startLayout">
+       <property name="spacing"><number>12</number></property>
+       <item>
+        <widget class="QFrame" name="cardFrame">
+         <layout class="QVBoxLayout" name="startCardLayout">
+          <property name="leftMargin"><number>16</number></property>
+          <property name="topMargin"><number>16</number></property>
+          <property name="rightMargin"><number>16</number></property>
+          <property name="bottomMargin"><number>16</number></property>
+          <property name="spacing"><number>10</number></property>
+          <item>
+           <widget class="QLabel" name="lblOpeningCash">
+            <property name="text"><string>Opening Cash (₱)</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinOpeningCash">
+            <property name="minimum"><double>0.00</double></property>
+            <property name="maximum"><double>999999.99</double></property>
+            <property name="decimals"><number>2</number></property>
+            <property name="value"><double>0.00</double></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblStartNotes">
+            <property name="text"><string>Notes (optional)</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="txtStartNotes">
+            <property name="maximumHeight"><number>70</number></property>
+            <property name="placeholderText"><string>e.g. Morning shift</string></property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnStartShift">
+         <property name="objectName"><string>btnPrimary</string></property>
+         <property name="text"><string>▶  Open Shift</string></property>
+         <property name="minimumHeight"><number>46</number></property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+
+     <!-- PAGE 1: ACTIVE SHIFT -->
+     <widget class="QWidget" name="pageActive">
+      <layout class="QVBoxLayout" name="activeLayout">
+       <property name="spacing"><number>10</number></property>
+
+       <!-- Session info card -->
+       <item>
+        <widget class="QFrame" name="cardFrame">
+         <layout class="QVBoxLayout" name="infoCardLayout">
+          <property name="leftMargin"><number>14</number></property>
+          <property name="topMargin"><number>12</number></property>
+          <property name="rightMargin"><number>14</number></property>
+          <property name="bottomMargin"><number>12</number></property>
+          <property name="spacing"><number>4</number></property>
+          <item>
+           <widget class="QLabel" name="lblSessionInfo">
+            <property name="text"><string>Session info</string></property>
+            <property name="styleSheet"><string>font-size:12px;color:#555;</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblSessionSales">
+            <property name="text"><string>Sales this shift: ₱0.00  (0 transactions)</string></property>
+            <property name="styleSheet"><string>font-size:13px;font-weight:bold;color:#2e7d32;</string></property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
+       <!-- Cash Adjustment card -->
+       <item>
+        <widget class="QFrame" name="cardFrame">
+         <layout class="QVBoxLayout" name="adjCardLayout">
+          <property name="leftMargin"><number>14</number></property>
+          <property name="topMargin"><number>12</number></property>
+          <property name="rightMargin"><number>14</number></property>
+          <property name="bottomMargin"><number>12</number></property>
+          <property name="spacing"><number>8</number></property>
+          <item>
+           <widget class="QLabel">
+            <property name="text"><string>Cash Adjustment</string></property>
+            <property name="styleSheet"><string>font-weight:bold;color:#1a73e8;</string></property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout">
+            <item>
+             <widget class="QComboBox" name="cmbAdjType">
+              <item><property name="text"><string>Cash In</string></property></item>
+              <item><property name="text"><string>Cash Out</string></property></item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="spinAdjAmount">
+              <property name="minimum"><double>0.01</double></property>
+              <property name="maximum"><double>999999.99</double></property>
+              <property name="decimals"><number>2</number></property>
+              <property name="value"><double>0.00</double></property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="txtAdjReason">
+            <property name="placeholderText"><string>Reason (required)</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnAddAdjustment">
+            <property name="objectName"><string>btnSecondary</string></property>
+            <property name="text"><string>+ Record Adjustment</string></property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
+       <!-- End shift button -->
+       <item>
+        <widget class="QPushButton" name="btnGoEndShift">
+         <property name="objectName"><string>btnDanger</string></property>
+         <property name="text"><string>■  End Shift</string></property>
+         <property name="minimumHeight"><number>46</number></property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+
+     <!-- PAGE 2: END SHIFT SUMMARY -->
+     <widget class="QWidget" name="pageEnd">
+      <layout class="QVBoxLayout" name="endLayout">
+       <property name="spacing"><number>10</number></property>
+       <item>
+        <widget class="QFrame" name="cardFrame">
+         <layout class="QVBoxLayout" name="endCardLayout">
+          <property name="leftMargin"><number>14</number></property>
+          <property name="topMargin"><number>12</number></property>
+          <property name="rightMargin"><number>14</number></property>
+          <property name="bottomMargin"><number>12</number></property>
+          <property name="spacing"><number>6</number></property>
+          <item>
+           <widget class="QLabel" name="lblEndSummary">
+            <property name="text"><string>Shift Summary</string></property>
+            <property name="styleSheet"><string>font-weight:bold;color:#1a73e8;</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblEndDetails">
+            <property name="text"><string></string></property>
+            <property name="styleSheet"><string>font-size:12px;color:#444;line-height:1.6;</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblClosingCash">
+            <property name="text"><string>Actual Cash in Drawer (₱)</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinClosingCash">
+            <property name="minimum"><double>0.00</double></property>
+            <property name="maximum"><double>999999.99</double></property>
+            <property name="decimals"><number>2</number></property>
+            <property name="value"><double>0.00</double></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblEndNotes">
+            <property name="text"><string>Notes (optional)</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="txtEndNotes">
+            <property name="maximumHeight"><number>60</number></property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QPushButton" name="btnBackToActive">
+           <property name="objectName"><string>btnSecondary</string></property>
+           <property name="text"><string>← Back</string></property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnConfirmEnd">
+           <property name="objectName"><string>btnDanger</string></property>
+           <property name="text"><string>Confirm End Shift</string></property>
+           <property name="minimumHeight"><number>46</number></property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+
+    </widget>
+   </item>
+
+   <!-- CLOSE BUTTON -->
+   <item>
+    <widget class="QPushButton" name="btnClose">
+     <property name="objectName"><string>btnSecondary</string></property>
+     <property name="text"><string>Close</string></property>
+    </widget>
+   </item>
+
+  </layout>
+ </widget>
+</ui>

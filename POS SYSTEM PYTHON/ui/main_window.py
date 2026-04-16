@@ -12,27 +12,30 @@ from PyQt5.QtWidgets import (
 
 from pos_logic import Cart
 from services.inventory_service import (
-    get_all_products, get_low_stock_products,
+    get_all_products, get_available_products, get_low_stock_products,
     deactivate_product, get_product_by_id
 )
 from services.sales_service import (
     checkout, get_sales_history, get_sale_items, get_daily_summary
 )
 from services.user_service import has_permission
+from services.shift_service import get_open_session
 from ui.product_dialog import ProductDialog
 from ui.restock_dialog import RestockDialog
 from ui.user_management import UserManagement
+from ui.shift_dialog import ShiftDialog
 from utils import format_currency
 
 UI_FILE = os.path.join(os.path.dirname(__file__), "main_window.ui")
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, user):
+    def __init__(self, user: dict, app=None):
         super().__init__()
         uic.loadUi(UI_FILE, self)
         self.user = user  # dict: id, username, role
-        self.cart = Cart()
+        self._app  = app
+        self.cart  = Cart()
 
         self._setup_tables()
         self._connect_signals()
@@ -43,6 +46,7 @@ class MainWindow(QMainWindow):
         self._load_sales()
         self._update_today_summary()
         self._init_date_filters()
+        self._refresh_shift_state()
 
         role_label = self.user["role"].upper()
         self.lblLoggedIn.setText(f"👤  {self.user['username']}  [{role_label}]")
@@ -88,6 +92,7 @@ class MainWindow(QMainWindow):
         # Top bar
         self.btnUsers.clicked.connect(self._open_user_management)
         self.btnLogout.clicked.connect(self._logout)
+        self.btnShift.clicked.connect(self._open_shift_dialog)
 
     def _apply_permissions(self):
         role = self.user["role"]
@@ -127,7 +132,7 @@ class MainWindow(QMainWindow):
     # ── Products ───────────────────────────────────────────────────────────
 
     def _load_products(self):
-        products = get_all_products(self.txtSearch.text().strip())
+        products = get_available_products(self.txtSearch.text().strip())
         self.tblProducts.setRowCount(0)
         for row, p in enumerate(products):
             self.tblProducts.insertRow(row)
@@ -213,19 +218,34 @@ class MainWindow(QMainWindow):
         if self.cart.is_empty():
             QMessageBox.warning(self, "Empty Cart", "Add items to cart first.")
             return
+
+        # Enforce active shift before any transaction
+        session = get_open_session(self.user["id"])
+        if not session:
+            QMessageBox.warning(
+                self, "No Active Shift",
+                "You must open a shift before processing transactions.\n"
+                "Click the 'Shift' button in the top bar."
+            )
+            return
+
         try:
             payment = float(self.txtPayment.text())
         except ValueError:
             QMessageBox.warning(self, "Invalid Payment", "Enter a valid payment amount.")
             return
         try:
-            result = checkout(self.cart.get_items(), payment, self.user["id"])
+            result = checkout(
+                self.cart.get_items(), payment,
+                self.user["id"], session["id"]
+            )
             self.cart.clear()
             self._refresh_cart()
             self.txtPayment.clear()
             self._load_products()
             self._load_inventory()
             self._update_today_summary()
+            self._refresh_shift_state()
             QMessageBox.information(
                 self, "✔ Checkout Complete",
                 f"Receipt No : {result['receipt_no']}\n"
@@ -387,6 +407,33 @@ class MainWindow(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, "Export Error", str(e))
 
+    # ── Shift ──────────────────────────────────────────────────────────────
+
+    def _open_shift_dialog(self):
+        dlg = ShiftDialog(self, user=self.user)
+        dlg.exec_()
+        self._refresh_shift_state()
+
+    def _refresh_shift_state(self):
+        """Update top-bar shift button and block checkout when no shift is open."""
+        session = get_open_session(self.user["id"])
+        if session:
+            self.btnShift.setText("🟢 Shift Open")
+            self.btnShift.setStyleSheet(
+                "QPushButton{background:#2e7d32;color:white;border:none;"
+                "padding:6px 14px;border-radius:4px;font-weight:bold;}"
+                "QPushButton:hover{background:#1b5e20;}"
+            )
+            self.btnCheckout.setEnabled(True)
+        else:
+            self.btnShift.setText("⚪ Open Shift")
+            self.btnShift.setStyleSheet(
+                "QPushButton{background:#f57f17;color:white;border:none;"
+                "padding:6px 14px;border-radius:4px;font-weight:bold;}"
+                "QPushButton:hover{background:#e65100;}"
+            )
+            self.btnCheckout.setEnabled(False)
+
     # ── User Management ────────────────────────────────────────────────────
 
     def _open_user_management(self):
@@ -400,9 +447,8 @@ class MainWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No
         ) == QMessageBox.Yes:
             self.close()
-            # Re-launch login via main
             from main import show_login
-            show_login()
+            show_login(self._app or QApplication.instance())
 
     # ── Helpers ────────────────────────────────────────────────────────────
 

@@ -3,31 +3,26 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QFont
 from database import initialize_db
 
-app = None
 
-
-def show_login():
+def show_login(app: QApplication):
     from ui.login_dialog import LoginDialog
     from ui.main_window import MainWindow
 
     login = LoginDialog()
     if login.exec_():
-        window = MainWindow(user=login.current_user)
+        window = MainWindow(user=login.current_user, app=app)
         window.showMaximized()
-        # keep reference so it doesn't get garbage collected
-        show_login._window = window
+        app._main_window = window   # prevent GC
     else:
-        # user closed login dialog — exit app
-        QApplication.quit()
+        app.quit()
 
 
 def main():
-    global app
     initialize_db()
     app = QApplication(sys.argv)
     app.setFont(QFont("Segoe UI", 10))
     app.setStyle("Fusion")
-    show_login()
+    show_login(app)
     sys.exit(app.exec_())
 
 

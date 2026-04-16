@@ -1,11 +1,12 @@
 import os
+import re
 from datetime import datetime
 from database import get_connection
 
 RECEIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "receipts")
 
 
-def generate_receipt_no():
+def generate_receipt_no() -> str:
     year = datetime.now().strftime("%Y")
     with get_connection() as conn:
         row = conn.execute(
@@ -15,19 +16,37 @@ def generate_receipt_no():
     return f"{year}-{seq:04d}"
 
 
-def format_currency(amount):
+def format_currency(amount: float) -> str:
     return f"₱{amount:,.2f}"
 
 
-def save_receipt(receipt_no, items, total, payment, change, timestamp):
+def _safe_filename(name: str) -> str:
+    """Strip any characters that could cause path traversal."""
+    return re.sub(r"[^\w\-]", "_", name)
+
+
+def save_receipt(
+    receipt_no: str,
+    items: list,
+    total: float,
+    payment: float,
+    change: float,
+    timestamp: str,
+) -> str:
     os.makedirs(RECEIPTS_DIR, exist_ok=True)
-    path = os.path.join(RECEIPTS_DIR, f"{receipt_no}.txt")
+    safe_name = _safe_filename(receipt_no)
+    path = os.path.join(RECEIPTS_DIR, f"{safe_name}.txt")
+
+    # Ensure path stays inside RECEIPTS_DIR
+    if not os.path.abspath(path).startswith(os.path.abspath(RECEIPTS_DIR)):
+        raise ValueError("Invalid receipt path.")
+
     W = 42
     lines = [
         "=" * W,
         "GROCERY STORE POS SYSTEM".center(W),
         f"Receipt No: {receipt_no}".center(W),
-        f"{timestamp}".center(W),
+        timestamp.center(W),
         "=" * W,
         f"{'ITEM':<20}{'QTY':>5}{'PRICE':>8}{'AMT':>9}",
         "-" * W,

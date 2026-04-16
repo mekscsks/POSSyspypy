@@ -35,7 +35,7 @@
       </item>
       <item>
        <widget class="QLabel" name="lblAppName">
-        <property name="text"><string>Grocery POS System</string></property>
+        <property name="text"><string>VARGAS POS System</string></property>
         <property name="alignment"><set>Qt::AlignCenter</set></property>
         <property name="styleSheet"><string>color:white;font-size:18px;font-weight:bold;</string></property>
        </widget>

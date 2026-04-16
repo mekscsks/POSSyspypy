@@ -5,6 +5,7 @@ LOW_STOCK_THRESHOLD = 10
 
 
 def get_all_products(search=""):
+    """For Inventory tab — shows all active products including out-of-stock."""
     with get_connection() as conn:
         if search:
             like = f"%{search}%"
@@ -14,6 +15,20 @@ def get_all_products(search=""):
             ).fetchall()
         return conn.execute(
             "SELECT * FROM products WHERE is_active=1 ORDER BY name"
+        ).fetchall()
+
+
+def get_available_products(search=""):
+    """For POS tab — only shows products with stock > 0."""
+    with get_connection() as conn:
+        if search:
+            like = f"%{search}%"
+            return conn.execute(
+                "SELECT * FROM products WHERE is_active=1 AND stock > 0 AND (name LIKE ? OR barcode LIKE ?) ORDER BY name",
+                (like, like),
+            ).fetchall()
+        return conn.execute(
+            "SELECT * FROM products WHERE is_active=1 AND stock > 0 ORDER BY name"
         ).fetchall()
 
 

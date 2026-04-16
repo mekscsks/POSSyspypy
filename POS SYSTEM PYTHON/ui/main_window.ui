@@ -48,6 +48,12 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="btnShift">
+         <property name="text"><string>⚪ Open Shift</string></property>
+         <property name="styleSheet"><string>QPushButton{background:#f57f17;color:white;border:none;padding:6px 14px;border-radius:4px;font-weight:bold;}QPushButton:hover{background:#e65100;}</string></property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="btnLowStock">
          <property name="text"><string>⚠ Low Stock</string></property>
          <property name="styleSheet"><string>QPushButton{background:#f4b400;color:#333;border:none;padding:6px 14px;border-radius:4px;font-weight:bold;}QPushButton:hover{background:#e6a800;}</string></property>
